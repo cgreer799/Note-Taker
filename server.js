@@ -3,8 +3,10 @@ const fs = require('fs');
 const uuid = require('uuid');
 const path = require('path');
 const db = require('./db/db.json');
+const store = require('./db/store');
 
-const app = express();
+const app = express().router();
+const router = express().router();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
@@ -19,29 +21,27 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
-app.get('/api/notes', (req, res) => {
-    res.json(db);
+router.get('/api/notes', (req, res) => {
+    store
+    .getNotes()
+    .then((notes) => {
+      return res.json(notes);
+    })
+    .catch((err) => res.status(500).json(err));
 });
 
-app.post('/api/notes', (req, res) => {
-    const { title, text } = req.body;
-    if (title && text) {
-        const newNote = {
-            title,
-            text,
-            id: uuid(),
-        };
+router.post('/api/notes', (req, res) => {
+    store
+      .addNote(req.body)
+      .then((note) => res.json(note))
+      .catch((err) => res.status(500).json(err));
+});
 
-        console.log(newNote);
-
-        db.push(newNote);
-        fs.writeFile('./db/db.json', JSON.stringify(db), (err) => {(err) ? console.log(err) : console.log('success')});
-
-        res.status(201).json(newNote);
-
-    } else {
-        res.status(500).json('Error saving your note');
-    }
+router.delete('/api/notes/:id', (req, res) => {
+store
+    .removeNote(req.params.id)
+    .then(() => res.json({ ok: true }))
+    .catch((err) => res.status(500).json(err));
 });
 
 app.listen(PORT, ()=> console.log(`listening on PORT: ${PORT}`));
