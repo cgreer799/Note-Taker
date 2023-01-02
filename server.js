@@ -6,7 +6,6 @@ const db = require('./db/db.json');
 const store = require('./db/store');
 
 const app = express();
-const router = express().router();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
@@ -17,11 +16,11 @@ app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/notes.html'));
 });
 
-router.get('*', (req, res) => {
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-router.get('/api/notes', (req, res) => {
+app.get('/api/notes', (req, res) => {
     store
     .getNotes()
     .then((notes) => {
@@ -30,14 +29,14 @@ router.get('/api/notes', (req, res) => {
     .catch((err) => res.status(500).json(err));
 });
 
-router.post('/api/notes', (req, res) => {
+app.post('/api/notes', (req, res) => {
     store
       .addNote(req.body)
       .then((note) => res.json(note))
       .catch((err) => res.status(500).json(err));
 });
 
-router.delete('/api/notes/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
 store
     .removeNote(req.params.id)
     .then(() => res.json({ ok: true }))
