@@ -6,19 +6,19 @@ const db = require('./db/db.json');
 const store = require('./db/store');
 
 const app = express();
-const router = express();
+const router = express().router();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended:true }));
 app.use(express.static('public'));
 
-router.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/notes.html'));
+app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/notes.html'));
 });
 
 router.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 router.get('/api/notes', (req, res) => {
