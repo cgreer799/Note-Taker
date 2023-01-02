@@ -5,8 +5,8 @@ const path = require('path');
 const db = require('./db/db.json');
 const store = require('./db/store');
 
-const app = express().router();
-const router = express().router();
+const app = express();
+const router = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
